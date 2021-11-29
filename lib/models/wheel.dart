@@ -9,17 +9,19 @@ class Wheel{
   final String newTireSize;
   final String newThreadType;
   final String newThreadWidth;
+  int number;
 
   Wheel({
-    required this.tireSize,
-    required this.threadType,
-    required this.threadWidth,
-    required this.tireBrand,
-    required this.client,
+    this.tireSize = '',
+    this.threadType = '',
+    this.threadWidth = '',
+    this.tireBrand = '',
+    this.client = '',
     this.patchNumbers = '',
     this.newTireSize = '',
     this.newThreadType = '',
     this.newThreadWidth = '',
+    this.number = 0,
     this.id = '',
   });
 }

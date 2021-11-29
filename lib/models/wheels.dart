@@ -7,11 +7,18 @@ import 'wheel.dart';
 class Wheels with ChangeNotifier {
   List<Wheel> _tires = [];
 
+
   List<Wheel> get tires {
+
     // if (_showFavoritesOnly) {
     //   return _items.where((element) => element.isFavorite).toList();
     // }
     return [..._tires];
+  }
+
+  Future<void> addWheel(Wheel wheel) async{
+    wheel.number = _tires.length+1;
+    _tires.add(wheel);
   }
 
   Future<void> fetchAndSetProducts([bool filterByUser = false]) async {

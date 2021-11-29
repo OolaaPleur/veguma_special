@@ -1,6 +1,6 @@
 # veguma_special
 
-Piecework Calculator
+Veguma tire app
 
 ## Getting Started
 

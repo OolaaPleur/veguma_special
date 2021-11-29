@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:veguma_special/models/wheel.dart';
 import 'package:veguma_special/widgets/new_tire_widget.dart';
-import 'package:veguma_special/widgets/wheel_card.dart';
 import 'package:veguma_special/models/wheels.dart';
 import 'package:provider/provider.dart';
 
@@ -17,14 +17,6 @@ class WheelListScreen extends StatefulWidget {
 class _WheelListScreenState extends State<WheelListScreen> {
   Future<void> _refreshProducts(BuildContext context) async {
     await Provider.of<Wheels>(context, listen: false).fetchAndSetProducts();
-  }
-  void _startTireAdding(BuildContext ctx) {
-    showModalBottomSheet(
-      context: ctx,
-      builder: (_) {
-        return NewTireWidget();
-      },
-    );
   }
 
   @override
@@ -55,7 +47,7 @@ class _WheelListScreenState extends State<WheelListScreen> {
                   child: ListView.builder(
                       itemCount: tireData.tires.length, itemBuilder: (_, i) {
                         return Column(children: [
-                          WheelCard(i, tireData.tires[i].id),
+                            NewTireWidget(indexNumber: i+1),
                           Divider(),
                         ],);
                   })),)
@@ -68,6 +60,7 @@ class _WheelListScreenState extends State<WheelListScreen> {
   }
 
   void addWheel() {
+    Provider.of<Wheels>(context, listen: false).addWheel(Wheel());
     setState(() {
 
     });
