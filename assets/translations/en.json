@@ -1,0 +1,17 @@
+{
+  "addData": "Add data",
+  "tireSize": "Tire Size",
+  "treadType": "Tread Type",
+  "treadWidth": "Tread Width",
+  "tireBrand": "Tire Brand",
+  "client": "Client",
+  "patchNumbers": "Patch Numbers",
+
+  "newTreadType": "New Tread Type",
+  "newTreadWidth": "New Tread Width",
+  "length" : "Length",
+
+  "interlayer" : "Interlayer",
+  "green" : "Green",
+  "white" : "White"
+}

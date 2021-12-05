@@ -1,14 +1,24 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
+
+import 'package:easy_localization/easy_localization.dart';
+import 'package:easy_localization_loader/easy_localization_loader.dart';
 
 import 'screens/wheel_list_screen.dart';
 import 'models/wheels.dart';
 
-void main() {
-  runApp(MultiProvider(providers: [
-    ChangeNotifierProvider(create: (_) => Wheels()),
-  ], child: const MyApp(),));
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await EasyLocalization.ensureInitialized();
+
+  runApp(EasyLocalization(
+      supportedLocales: const [Locale('ru')],
+      path: 'assets/translations',
+      fallbackLocale: const Locale('ru'),
+      saveLocale: false,
+      useOnlyLangCode: true,
+      assetLoader: JsonAssetLoader(),
+      child: const MyApp()));
 }
 
 class MyApp extends StatelessWidget {
@@ -16,19 +26,22 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Veguma Special',
-      localizationsDelegates: AppLocalizations.localizationsDelegates,
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.amber).copyWith(secondary: Colors.purple),
-      ),
-      routes: {
-        '/': (ctx) => const WheelListScreen(),
-      },
-      supportedLocales: const [
-        Locale('en', ''), // English, no country code
-        Locale('ru', ''), // Russian, no country code
-      ],);
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => Wheels()),
+      ],
+      child: MaterialApp(
+          title: 'Veguma Special',
+          localizationsDelegates: context.localizationDelegates,
+          theme: ThemeData(
+            colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.amber)
+                .copyWith(secondary: Colors.purple),
+          ),
+          routes: {
+            '/': (ctx) => const WheelListScreen(),
+          },
+          supportedLocales: context.supportedLocales,
+          locale: context.locale),
+    );
   }
 }
-

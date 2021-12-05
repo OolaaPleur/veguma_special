@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+
 import 'package:http/http.dart' as http;
 
 import 'wheel.dart';
@@ -7,12 +8,7 @@ import 'wheel.dart';
 class Wheels with ChangeNotifier {
   List<Wheel> _tires = [];
 
-
   List<Wheel> get tires {
-
-    // if (_showFavoritesOnly) {
-    //   return _items.where((element) => element.isFavorite).toList();
-    // }
     return [..._tires];
   }
 
@@ -33,16 +29,16 @@ class Wheels with ChangeNotifier {
       final List<Wheel> tire = [];
       extractedData.forEach((prodId, prodData) {
         tire.add(Wheel(
+            prodData['dateTime'],
             id: prodId,
             tireSize: prodData['tireSize'],
-            threadType: prodData['threadType'],
-            threadWidth: prodData['threadWidth'],
+            treadType: prodData['threadType'],
+            treadWidth: prodData['threadWidth'],
             tireBrand: prodData['tireBrand'],
             client: prodData['client'],
             patchNumbers:  prodData['patchNumbers'],
-            newTireSize: prodData['newTireSize'],
-            newThreadType: prodData['newThreadType'],
-            newThreadWidth: prodData['newThreadWidth']));
+            newTreadType: prodData['newThreadType'],
+            newTreadWidth: prodData['newThreadWidth']));
       });
       _tires = tire;
     } catch (error) {
