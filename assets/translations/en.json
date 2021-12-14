@@ -13,5 +13,15 @@
 
   "interlayer" : "Interlayer",
   "green" : "Green",
-  "white" : "White"
+  "white" : "White",
+
+  "warehouse" : "Warehouse",
+  "newTread" : "New Tread",
+  "treadDefect" : "Tread Defect",
+
+  "oneMore" : "One more",
+  "tireSizeLength": "Tire Size Length",
+
+  "hint" : "Hint",
+  "hintAboutSameWheels" : "Same wheels are wheels with same size, original tread type, width and client"
 }

@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 
+import 'package:easy_localization/easy_localization.dart';
 import 'package:http/http.dart' as http;
 
 import 'wheel.dart';
@@ -12,9 +13,83 @@ class Wheels with ChangeNotifier {
     return [..._tires];
   }
 
-  Future<void> addWheel(Wheel wheel) async{
-    wheel.number = _tires.length+1;
+  Future<void> updateWheel(
+      {required int number,
+      required String tireSize,
+      required String treadType,
+      required String treadWidth,
+      required String patchNumbers,
+      required String interlayer,
+      required String client,
+      required String warehouse,
+      required String newTreadType,
+      required String newTreadWidth,
+      required String newTread,
+      required String treadDefect,
+      required String tireBrand,
+      required String tireSizeLength}) async {
+    String datetime = tires[number].dateTime;
+    _tires.removeAt(number);
+    Wheel wheel = Wheel(
+        number: number,
+        dateTime: datetime,
+        tireSize: tireSize,
+        treadType: treadType,
+        treadWidth: treadWidth,
+        patchNumbers: patchNumbers,
+        interlayer: interlayer,
+        client: client,
+        warehouse: warehouse,
+        newTreadType: newTreadType,
+        newTreadWidth: newTreadWidth,
+        newTread: newTread,
+        treadDefect: treadDefect,
+        tireBrand: tireBrand,
+        tireSizeLength: tireSizeLength);
+
+    _tires.insert(number, wheel);
+    notifyListeners();
+  }
+
+  Future<void> addWheel(
+      {required int number,
+      required String tireSize,
+      required String treadType,
+      required String treadWidth,
+      required String patchNumbers,
+      required String interlayer,
+      required String client,
+      required String warehouse,
+      required String newTreadType,
+      required String newTreadWidth,
+      required String newTread,
+      required String treadDefect,
+      required String tireBrand,
+      required String tireSizeLength}) async {
+    Wheel wheel = Wheel(
+        number: number,
+        dateTime:
+            DateFormat('H:mm dd.MM.yyyy').format(DateTime.now()).toString(),
+        tireSize: tireSize,
+        treadType: treadType,
+        treadWidth: treadWidth,
+        patchNumbers: patchNumbers,
+        interlayer: interlayer,
+        client: client,
+        warehouse: warehouse,
+        newTreadType: newTreadType,
+        newTreadWidth: newTreadWidth,
+        newTread: newTread,
+        treadDefect: treadDefect,
+        tireBrand: tireBrand,
+        tireSizeLength: tireSizeLength);
     _tires.add(wheel);
+    notifyListeners();
+  }
+
+  Future<void> deleteWheel() async {
+    _tires.remove(_tires.last);
+    notifyListeners();
   }
 
   Future<void> fetchAndSetProducts([bool filterByUser = false]) async {
@@ -29,20 +104,20 @@ class Wheels with ChangeNotifier {
       final List<Wheel> tire = [];
       extractedData.forEach((prodId, prodData) {
         tire.add(Wheel(
-            prodData['dateTime'],
             id: prodId,
+            dateTime: prodData['dateTime'],
             tireSize: prodData['tireSize'],
             treadType: prodData['threadType'],
             treadWidth: prodData['threadWidth'],
             tireBrand: prodData['tireBrand'],
             client: prodData['client'],
-            patchNumbers:  prodData['patchNumbers'],
+            patchNumbers: prodData['patchNumbers'],
             newTreadType: prodData['newThreadType'],
             newTreadWidth: prodData['newThreadWidth']));
       });
       _tires = tire;
     } catch (error) {
-      throw (error);
+      rethrow;
     }
   }
 }

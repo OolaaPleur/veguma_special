@@ -1,5 +1,5 @@
 class Wheel{
-  final DateTime dateTime;
+  final String dateTime;
   final String id;
   final String tireSize;
   final String treadType;
@@ -9,18 +9,30 @@ class Wheel{
   final String patchNumbers;
   final String newTreadType;
   final String newTreadWidth;
-  int number;
+  final int number;
+  final String interlayer;
+  final String warehouse;
+  final String newTread;
+  final String treadDefect;
+  final String tireSizeLength;
 
-  Wheel(this.dateTime, {
+
+  Wheel({
+    this.id = '',
+    this.number = 0,
+    this.dateTime = '',
     this.tireSize = '',
     this.treadType = '',
     this.treadWidth = '',
-    this.tireBrand = '',
-    this.client = '',
     this.patchNumbers = '',
+    this.interlayer = '',
+    this.client = '',
+    this.warehouse = '',
     this.newTreadType = '',
     this.newTreadWidth = '',
-    this.number = 0,
-    this.id = '',
+    this.newTread = '',
+    this.treadDefect = '',
+    this.tireBrand = '',
+    this.tireSizeLength = '',
   });
 }
