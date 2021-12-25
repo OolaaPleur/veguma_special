@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
+import 'package:veguma_special/models/custom_picker.dart';
 
 import 'package:veguma_special/models/repository.dart';
 import 'package:veguma_special/models/wheel.dart';
@@ -143,12 +145,6 @@ class _NewTireWidgetState extends State<NewTireWidget> {
     int currentIndex = Provider.of<Wheels>(context, listen: false).tires.length;
     final mediaQuery = MediaQuery.of(context);
 
-    bool checkSameValuesInARow() {
-      List wheels = Provider.of<Wheels>(context, listen: false).tires;
-      for (int i = wheels.length - 1; i >= 0; i--) {}
-      return false;
-    }
-
     bool checkDropdownValuesEqualsWheelValues() {
       Wheel wheel = Provider.of<Wheels>(context, listen: false)
           .tires[widget.wheel.number];
@@ -170,6 +166,12 @@ class _NewTireWidgetState extends State<NewTireWidget> {
       }
       return false;
     }
+
+    TextEditingController _treadDateController =
+        TextEditingController(text: DateTime.now().toString());
+    String _valueChanged2 = '';
+    String _valueToValidate2 = '';
+    String _valueSaved2 = '';
 
     return SingleChildScrollView(
       child: Card(
@@ -212,8 +214,47 @@ class _NewTireWidgetState extends State<NewTireWidget> {
                 newTreadCheckbox(),
                 isCheckedNewTread ? newTreadRow() : const SizedBox.shrink(),
                 treadDefect(),
+                TextButton(
+                    onPressed: () {
+                      DatePicker.showPicker(
+                        context,
+                        showTitleActions: true,
+                        pickerModel: CustomMonthPicker(
+                          minTime: DateTime(2015, 1, 1),
+                          maxTime: DateTime.now(),
+                          currentTime: DateTime.now(),
+                          locale: LocaleType.ru,
+                        ),
+                        onChanged: (date) {
+                          print('change $date in time zone ' +
+                              date.timeZoneOffset.inHours.toString());
+                        },
+                        onConfirm: (date) {
+                          print('confirm $date');
+                        },
+                      );
+                    },
+                    child: const Text(
+                      'добавить добавление значений в таблицу',
+                      style: TextStyle(color: Colors.blue),
+                    )),
                 oneMoreSaveAndDeleteButtons(
                     context, checkDropdownValuesEqualsWheelValues, mediaQuery),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    Container(
+                      color: const Color(0xFF42A5F5),
+                      padding: const EdgeInsets.all(10.0),
+                      child: Text(
+                        '${tr('sameWheelsInARow')}: ${Provider.of<Wheels>(context).checkSameValuesInARow(widget.wheel.number)}',
+                        style: const TextStyle(
+                          fontSize: 15,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ],
             ),
           ),
@@ -292,7 +333,8 @@ class _NewTireWidgetState extends State<NewTireWidget> {
               dropdownValues[Indexes.treadWidth.index] = _selectedTreadWidth;
               return;
             }
-            dropdownValues[Indexes.treadType.index] = value;
+            dropdownValues[Indexes.treadType.index] = _selectedTreadType;
+            dropdownValues[Indexes.treadWidth.index] = _selectedTreadWidth;
           });
         },
         value: _selectedTreadType,
@@ -624,26 +666,40 @@ class _NewTireWidgetState extends State<NewTireWidget> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
-        ElevatedButton(
-            onPressed: () {
-              saveTextFieldValues();
-              Provider.of<Wheels>(context, listen: false).addWheel(
-                  number: widget.wheel.number + 1,
-                  tireSize: dropdownValues[Indexes.tireSize.index],
-                  treadType: dropdownValues[Indexes.treadType.index],
-                  treadWidth: dropdownValues[Indexes.treadWidth.index],
-                  patchNumbers: dropdownValues[Indexes.patchNumbers.index],
-                  interlayer: dropdownValues[Indexes.interlayer.index],
-                  client: dropdownValues[Indexes.client.index],
-                  warehouse: dropdownValues[Indexes.warehouse.index],
-                  newTreadType: dropdownValues[Indexes.newTreadType.index],
-                  newTreadWidth: dropdownValues[Indexes.newTreadWidth.index],
-                  newTread: dropdownValues[Indexes.newTread.index],
-                  treadDefect: dropdownValues[Indexes.treadDefect.index],
-                  tireBrand: dropdownValues[Indexes.tireBrand.index],
-                  tireSizeLength: dropdownValues[Indexes.tireSizeLength.index]);
-            },
-            child: Text(tr("oneMore"))),
+        widget.wheel.number + 1 ==
+                Provider.of<Wheels>(context, listen: false).tires.length
+            ? ElevatedButton(
+                onPressed: checkDropdownValuesEqualsWheelValues()
+                    ? () {
+                        saveTextFieldValues();
+                        Provider.of<Wheels>(context, listen: false).addWheel(
+                            number: Provider.of<Wheels>(context, listen: false)
+                                .tires
+                                .length,
+                            tireSize: dropdownValues[Indexes.tireSize.index],
+                            treadType: dropdownValues[Indexes.treadType.index],
+                            treadWidth:
+                                dropdownValues[Indexes.treadWidth.index],
+                            patchNumbers:
+                                dropdownValues[Indexes.patchNumbers.index],
+                            interlayer:
+                                dropdownValues[Indexes.interlayer.index],
+                            client: dropdownValues[Indexes.client.index],
+                            warehouse: dropdownValues[Indexes.warehouse.index],
+                            newTreadType:
+                                dropdownValues[Indexes.newTreadType.index],
+                            newTreadWidth:
+                                dropdownValues[Indexes.newTreadWidth.index],
+                            newTread: dropdownValues[Indexes.newTread.index],
+                            treadDefect:
+                                dropdownValues[Indexes.treadDefect.index],
+                            tireBrand: dropdownValues[Indexes.tireBrand.index],
+                            tireSizeLength:
+                                dropdownValues[Indexes.tireSizeLength.index]);
+                      }
+                    : null,
+                child: Text(tr("oneMore")))
+            : const SizedBox.shrink(),
         ElevatedButton(
             style: ButtonStyle(
                 backgroundColor: checkDropdownValuesEqualsWheelValues()
@@ -652,10 +708,6 @@ class _NewTireWidgetState extends State<NewTireWidget> {
             onPressed: () {
               saveTextFieldValues();
               print(dropdownValues);
-              print({widget.wheel.number + 1}.toString() + 'current index');
-              print(Provider.of<Wheels>(context, listen: false)
-                  .tires[widget.wheel.number]
-                  .tireSize);
               Provider.of<Wheels>(context, listen: false).updateWheel(
                   number: widget.wheel.number,
                   tireSize: dropdownValues[Indexes.tireSize.index],
@@ -690,7 +742,7 @@ class _NewTireWidgetState extends State<NewTireWidget> {
           message: tr('hintAboutSameWheels'),
           child: Text(tr('hint')),
           triggerMode: TooltipTriggerMode.tap,
-        )
+        ),
       ],
     );
   }

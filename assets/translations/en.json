@@ -23,5 +23,6 @@
   "tireSizeLength": "Tire Size Length",
 
   "hint" : "Hint",
-  "hintAboutSameWheels" : "Same wheels are wheels with same size, original tread type, width and client"
+  "hintAboutSameWheels" : "Same wheels are wheels with same size, original tread type, width and client",
+  "sameWheelsInARow" : "Same wheels in a row"
 }

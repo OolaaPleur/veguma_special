@@ -51,6 +51,26 @@ class Wheels with ChangeNotifier {
     notifyListeners();
   }
 
+  int i = 0;
+  int j = 0;
+
+  int checkSameValuesInARow(int currentIndex) {
+    int foo = 0;
+    if (currentIndex == 0) return 0;
+    if (currentIndex == 1) return 1;
+    for (j = currentIndex - 1; j >= 0; j--) {
+      if (_tires[currentIndex].tireSize == _tires[j].tireSize &&
+          _tires[currentIndex].treadType == _tires[j].treadType &&
+          _tires[currentIndex].treadWidth == _tires[j].treadWidth &&
+          _tires[currentIndex].client == _tires[j].client) {
+        foo += 1;
+      } else {
+        return foo;
+      }
+    }
+    return foo;
+  }
+
   Future<void> addWheel(
       {required int number,
       required String tireSize,
