@@ -12,10 +12,13 @@ class Wheel{
   final int number;
   final String interlayer;
   final String warehouse;
-  final String newTread;
-  final String treadDefect;
+  final bool newTread;
+  final bool treadDefect;
   final String tireSizeLength;
 
+  final String treadDate;
+  final String mixtureNumber;
+  final String hardness;
 
   Wheel({
     this.id = '',
@@ -30,9 +33,12 @@ class Wheel{
     this.warehouse = '',
     this.newTreadType = '',
     this.newTreadWidth = '',
-    this.newTread = '',
-    this.treadDefect = '',
+    this.newTread = false,
+    this.treadDefect = false,
     this.tireBrand = '',
     this.tireSizeLength = '',
+    this.treadDate='',
+    this.mixtureNumber='',
+    this.hardness='',
   });
 }

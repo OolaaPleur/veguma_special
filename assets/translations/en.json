@@ -24,5 +24,9 @@
 
   "hint" : "Hint",
   "hintAboutSameWheels" : "Same wheels are wheels with same size, original tread type, width and client",
-  "sameWheelsInARow" : "Same wheels in a row"
+  "sameWheelsInARow" : "Same wheels in a row",
+
+  "treadDate" : "Tread date",
+  "mixtureNumber" : "Mixture number",
+  "hardness" : "Hardness"
 }

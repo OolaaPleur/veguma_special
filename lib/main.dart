@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 
 import 'package:easy_localization/easy_localization.dart';
 import 'package:easy_localization_loader/easy_localization_loader.dart';
+import 'package:veguma_special/models/createPdf.dart';
 
 import 'screens/wheel_list_screen.dart';
 import 'models/wheels.dart';
@@ -29,6 +30,7 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => Wheels()),
+        ChangeNotifierProvider(create: (_) => CreatePdf()),
       ],
       child: MaterialApp(
           title: 'Veguma Special',

@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
+import 'package:provider/provider.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:veguma_special/models/createPdf.dart';
 
 import 'package:veguma_special/widgets/new_tire_widget.dart';
 import 'package:veguma_special/models/wheels.dart';
@@ -26,7 +27,9 @@ class _WheelListScreenState extends State<WheelListScreen> {
         title: Text(tr('addData')),
         actions: [
           IconButton(
-            onPressed: () {},
+            onPressed: () {
+              Provider.of<CreatePdf>(context, listen: false).createPdfOnPressed(context);
+            },
             icon: const Icon(Icons.share),
             alignment: Alignment.centerLeft,
           )
@@ -34,7 +37,8 @@ class _WheelListScreenState extends State<WheelListScreen> {
       ),
       floatingActionButton: FloatingActionButton(
           onPressed: () {
-            int listLength = Provider.of<Wheels>(context, listen: false).tires.length;
+            int listLength =
+                Provider.of<Wheels>(context, listen: false).tires.length;
             Provider.of<Wheels>(context, listen: false).addWheel(
                 number: listLength,
                 tireSize: tr('tireSize'),
@@ -46,10 +50,13 @@ class _WheelListScreenState extends State<WheelListScreen> {
                 warehouse: tr('warehouse'),
                 newTreadType: tr('treadType'),
                 newTreadWidth: tr('treadWidth'),
-                newTread: 'false',
-                treadDefect: 'false',
+                newTread: false,
+                treadDefect: false,
                 tireBrand: '',
-                tireSizeLength: '');
+                tireSizeLength: '',
+                treadDate: '',
+                mixtureNumber: '',
+                hardness: '');
           },
           child: const Icon(Icons.add)),
       body: FutureBuilder(
@@ -69,9 +76,7 @@ class _WheelListScreenState extends State<WheelListScreen> {
                               itemBuilder: (_, i) {
                                 return Column(
                                   children: [
-                                    NewTireWidget(
-                                      wheel: tireData.tires[i]
-                                    ),
+                                    NewTireWidget(wheel: tireData.tires[i]),
                                     const Divider(),
                                   ],
                                 );

@@ -13,21 +13,25 @@ class Wheels with ChangeNotifier {
     return [..._tires];
   }
 
-  Future<void> updateWheel(
-      {required int number,
-      required String tireSize,
-      required String treadType,
-      required String treadWidth,
-      required String patchNumbers,
-      required String interlayer,
-      required String client,
-      required String warehouse,
-      required String newTreadType,
-      required String newTreadWidth,
-      required String newTread,
-      required String treadDefect,
-      required String tireBrand,
-      required String tireSizeLength}) async {
+  Future<void> updateWheel({
+    required int number,
+    required String tireSize,
+    required String treadType,
+    required String treadWidth,
+    required String patchNumbers,
+    required String interlayer,
+    required String client,
+    required String warehouse,
+    required String newTreadType,
+    required String newTreadWidth,
+    required bool newTread,
+    required bool treadDefect,
+    required String tireBrand,
+    required String tireSizeLength,
+    required String treadDate,
+    required String mixtureNumber,
+    required String hardness,
+  }) async {
     String datetime = tires[number].dateTime;
     _tires.removeAt(number);
     Wheel wheel = Wheel(
@@ -45,7 +49,10 @@ class Wheels with ChangeNotifier {
         newTread: newTread,
         treadDefect: treadDefect,
         tireBrand: tireBrand,
-        tireSizeLength: tireSizeLength);
+        tireSizeLength: tireSizeLength,
+        treadDate: treadDate,
+        mixtureNumber: mixtureNumber,
+        hardness: hardness);
 
     _tires.insert(number, wheel);
     notifyListeners();
@@ -71,21 +78,25 @@ class Wheels with ChangeNotifier {
     return foo;
   }
 
-  Future<void> addWheel(
-      {required int number,
-      required String tireSize,
-      required String treadType,
-      required String treadWidth,
-      required String patchNumbers,
-      required String interlayer,
-      required String client,
-      required String warehouse,
-      required String newTreadType,
-      required String newTreadWidth,
-      required String newTread,
-      required String treadDefect,
-      required String tireBrand,
-      required String tireSizeLength}) async {
+  Future<void> addWheel({
+    required int number,
+    required String tireSize,
+    required String treadType,
+    required String treadWidth,
+    required String patchNumbers,
+    required String interlayer,
+    required String client,
+    required String warehouse,
+    required String newTreadType,
+    required String newTreadWidth,
+    required bool newTread,
+    required bool treadDefect,
+    required String tireBrand,
+    required String tireSizeLength,
+    required String treadDate,
+    required String mixtureNumber,
+    required String hardness,
+  }) async {
     Wheel wheel = Wheel(
         number: number,
         dateTime:
@@ -102,7 +113,10 @@ class Wheels with ChangeNotifier {
         newTread: newTread,
         treadDefect: treadDefect,
         tireBrand: tireBrand,
-        tireSizeLength: tireSizeLength);
+        tireSizeLength: tireSizeLength,
+        treadDate: treadDate,
+        mixtureNumber: mixtureNumber,
+        hardness: hardness);
     _tires.add(wheel);
     notifyListeners();
   }

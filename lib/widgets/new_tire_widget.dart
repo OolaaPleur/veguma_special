@@ -4,8 +4,9 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
-import 'package:veguma_special/models/custom_picker.dart';
+import 'package:intl/intl.dart';
 
+import 'package:veguma_special/models/custom_picker.dart';
 import 'package:veguma_special/models/repository.dart';
 import 'package:veguma_special/models/wheel.dart';
 import 'package:veguma_special/models/wheels.dart';
@@ -23,7 +24,10 @@ enum Indexes {
   newTread,
   treadDefect,
   tireBrand,
-  tireSizeLength
+  tireSizeLength,
+  treadDate,
+  mixtureNumber,
+  hardness,
 }
 
 class NewTireWidget extends StatefulWidget {
@@ -68,12 +72,17 @@ class _NewTireWidgetState extends State<NewTireWidget> {
       widget.wheel.interlayer,
       widget.wheel.client,
       widget.wheel.warehouse,
-      widget.wheel.newTreadType, //new tread type
-      widget.wheel.newTreadWidth, //new tread width
+      widget.wheel.newTreadType,
+      //new tread type
+      widget.wheel.newTreadWidth,
+      //new tread width
       widget.wheel.newTread,
       widget.wheel.treadDefect,
       widget.wheel.tireBrand,
-      widget.wheel.tireSizeLength
+      widget.wheel.tireSizeLength,
+      widget.wheel.treadDate,
+      widget.wheel.mixtureNumber,
+      widget.wheel.hardness,
     ]; // dropdown values, starting from 0
     print(dropdownValues);
 
@@ -81,10 +90,20 @@ class _NewTireWidgetState extends State<NewTireWidget> {
     _clientController.text = widget.wheel.client;
     _tireBrandController.text = widget.wheel.tireBrand;
 
+    _mixtureNumberController.text = widget.wheel.mixtureNumber;
+    _hardnessController.text = widget.wheel.hardness;
+    isCheckedNewTread = widget.wheel.newTread;
+    isCheckedTradeDefect = widget.wheel.treadDefect;
+    setState(() {
+
+    });
+
     super.initState();
   }
+  late bool isCheckedNewTread;
+  late bool isCheckedTradeDefect;
 
-  List<String> dropdownValues = [];
+  List<dynamic> dropdownValues = [];
 
   List<String> tireSize = [
     tr('tireSize'),
@@ -101,8 +120,9 @@ class _NewTireWidgetState extends State<NewTireWidget> {
   final TextEditingController _clientController = TextEditingController();
   final TextEditingController _tireBrandController = TextEditingController();
 
-  bool isCheckedNewTread = false;
-  bool isCheckedTradeDefect = false;
+  final TextEditingController _mixtureNumberController =
+      TextEditingController();
+  final TextEditingController _hardnessController = TextEditingController();
 
   Repository repo = Repository();
   List<String> _treadType = [tr('treadType')];
@@ -117,6 +137,8 @@ class _NewTireWidgetState extends State<NewTireWidget> {
   String _selectedNewTreadWidth = '';
 
   int patchCount = 0;
+
+  DateTime lastPickedDate = DateTime.now();
 
   void length() {
     if (dropdownValues[Indexes.tireSize.index] == '315/70') {
@@ -138,11 +160,42 @@ class _NewTireWidgetState extends State<NewTireWidget> {
     dropdownValues[Indexes.client.index] = _clientController.text;
     dropdownValues[Indexes.tireSizeLength.index] =
         _tireSizeLengthController.text;
+    dropdownValues[Indexes.mixtureNumber.index] = _mixtureNumberController.text;
+    dropdownValues[Indexes.hardness.index] = _hardnessController.text;
+  }
+
+  void updateValues() {
+    Provider.of<Wheels>(context, listen: false).updateWheel(
+        number: widget.wheel.number,
+        tireSize: dropdownValues[Indexes.tireSize.index],
+        treadType: dropdownValues[Indexes.treadType.index],
+        treadWidth: dropdownValues[Indexes.treadWidth.index],
+        patchNumbers: dropdownValues[Indexes.patchNumbers.index],
+        interlayer: dropdownValues[Indexes.interlayer.index],
+        client: dropdownValues[Indexes.client.index],
+        warehouse: dropdownValues[Indexes.warehouse.index],
+        newTreadType: dropdownValues[Indexes.newTreadType.index],
+        newTreadWidth: dropdownValues[Indexes.newTreadWidth.index],
+        newTread: dropdownValues[Indexes.newTread.index],
+        treadDefect: dropdownValues[Indexes.treadDefect.index],
+        tireBrand: dropdownValues[Indexes.tireBrand.index],
+        tireSizeLength: dropdownValues[Indexes.tireSizeLength.index],
+        treadDate: dropdownValues[Indexes.treadDate.index],
+        mixtureNumber: dropdownValues[Indexes.mixtureNumber.index],
+        hardness: dropdownValues[Indexes.hardness.index]);
+  }
+
+  void treadDateUpdating(DateTime date) {
+    lastPickedDate = date;
+    String? month =
+        toBeginningOfSentenceCase(DateFormat.LLLL('ru').format(date));
+    String? year = toBeginningOfSentenceCase(DateFormat.y('ru').format(date));
+    dropdownValues[Indexes.treadDate.index] = '$month $year';
+    updateValues();
   }
 
   @override
   Widget build(BuildContext context) {
-    int currentIndex = Provider.of<Wheels>(context, listen: false).tires.length;
     final mediaQuery = MediaQuery.of(context);
 
     bool checkDropdownValuesEqualsWheelValues() {
@@ -161,17 +214,14 @@ class _NewTireWidgetState extends State<NewTireWidget> {
           wheel.treadDefect == dropdownValues[Indexes.treadDefect.index] &&
           wheel.tireBrand == dropdownValues[Indexes.tireBrand.index] &&
           wheel.tireSizeLength ==
-              dropdownValues[Indexes.tireSizeLength.index]) {
+              dropdownValues[Indexes.tireSizeLength.index] &&
+          wheel.treadDate == dropdownValues[Indexes.treadDate.index] &&
+          wheel.mixtureNumber == dropdownValues[Indexes.mixtureNumber.index] &&
+          wheel.hardness == dropdownValues[Indexes.hardness.index]) {
         return true;
       }
       return false;
     }
-
-    TextEditingController _treadDateController =
-        TextEditingController(text: DateTime.now().toString());
-    String _valueChanged2 = '';
-    String _valueToValidate2 = '';
-    String _valueSaved2 = '';
 
     return SingleChildScrollView(
       child: Card(
@@ -214,30 +264,19 @@ class _NewTireWidgetState extends State<NewTireWidget> {
                 newTreadCheckbox(),
                 isCheckedNewTread ? newTreadRow() : const SizedBox.shrink(),
                 treadDefect(),
-                TextButton(
-                    onPressed: () {
-                      DatePicker.showPicker(
-                        context,
-                        showTitleActions: true,
-                        pickerModel: CustomMonthPicker(
-                          minTime: DateTime(2015, 1, 1),
-                          maxTime: DateTime.now(),
-                          currentTime: DateTime.now(),
-                          locale: LocaleType.ru,
-                        ),
-                        onChanged: (date) {
-                          print('change $date in time zone ' +
-                              date.timeZoneOffset.inHours.toString());
-                        },
-                        onConfirm: (date) {
-                          print('confirm $date');
-                        },
-                      );
-                    },
-                    child: const Text(
-                      'добавить добавление значений в таблицу',
-                      style: TextStyle(color: Colors.blue),
-                    )),
+                treadDateButton(context),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: SizedBox(
+                      width: mediaQuery.size.width * 0.3,
+                      child: TextField(controller: _mixtureNumberController, keyboardType: TextInputType.number,)),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: SizedBox(
+                      width: mediaQuery.size.width * 0.3,
+                      child: TextField(controller: _hardnessController, keyboardType: TextInputType.number,)),
+                ),
                 oneMoreSaveAndDeleteButtons(
                     context, checkDropdownValuesEqualsWheelValues, mediaQuery),
                 Row(
@@ -552,10 +591,10 @@ class _NewTireWidgetState extends State<NewTireWidget> {
               print(_newTreadType);
               print(_newTreadWidth);
               isCheckedNewTread = value!;
-              if (dropdownValues[Indexes.newTread.index] == 'false') {
-                dropdownValues[Indexes.newTread.index] = 'true';
-              } else if (dropdownValues[Indexes.newTread.index] == 'true') {
-                dropdownValues[Indexes.newTread.index] = 'false';
+              if (dropdownValues[Indexes.newTread.index] == false) {
+                dropdownValues[Indexes.newTread.index] = true;
+              } else if (dropdownValues[Indexes.newTread.index] == true) {
+                dropdownValues[Indexes.newTread.index] = false;
               }
             });
           },
@@ -650,10 +689,10 @@ class _NewTireWidgetState extends State<NewTireWidget> {
             setState(() {
               isCheckedTradeDefect = value!;
             });
-            if (dropdownValues[Indexes.treadDefect.index] == 'false') {
-              dropdownValues[Indexes.treadDefect.index] = 'true';
-            } else if (dropdownValues[Indexes.treadDefect.index] == 'true') {
-              dropdownValues[Indexes.treadDefect.index] = 'false';
+            if (dropdownValues[Indexes.treadDefect.index] == false) {
+              dropdownValues[Indexes.treadDefect.index] = true;
+            } else if (dropdownValues[Indexes.treadDefect.index] == true) {
+              dropdownValues[Indexes.treadDefect.index] = false;
             }
           },
         ),
@@ -661,8 +700,10 @@ class _NewTireWidgetState extends State<NewTireWidget> {
     );
   }
 
-  Row oneMoreSaveAndDeleteButtons(BuildContext context,
-      bool checkDropdownValuesEqualsWheelValues(), MediaQueryData mediaQuery) {
+  Row oneMoreSaveAndDeleteButtons(
+      BuildContext context,
+      bool Function() checkDropdownValuesEqualsWheelValues,
+      MediaQueryData mediaQuery) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
@@ -695,7 +736,11 @@ class _NewTireWidgetState extends State<NewTireWidget> {
                                 dropdownValues[Indexes.treadDefect.index],
                             tireBrand: dropdownValues[Indexes.tireBrand.index],
                             tireSizeLength:
-                                dropdownValues[Indexes.tireSizeLength.index]);
+                                dropdownValues[Indexes.tireSizeLength.index],
+                            treadDate: dropdownValues[Indexes.treadDate.index],
+                            mixtureNumber:
+                                dropdownValues[Indexes.mixtureNumber.index],
+                            hardness: dropdownValues[Indexes.hardness.index]);
                       }
                     : null,
                 child: Text(tr("oneMore")))
@@ -708,21 +753,7 @@ class _NewTireWidgetState extends State<NewTireWidget> {
             onPressed: () {
               saveTextFieldValues();
               print(dropdownValues);
-              Provider.of<Wheels>(context, listen: false).updateWheel(
-                  number: widget.wheel.number,
-                  tireSize: dropdownValues[Indexes.tireSize.index],
-                  treadType: dropdownValues[Indexes.treadType.index],
-                  treadWidth: dropdownValues[Indexes.treadWidth.index],
-                  patchNumbers: dropdownValues[Indexes.patchNumbers.index],
-                  interlayer: dropdownValues[Indexes.interlayer.index],
-                  client: dropdownValues[Indexes.client.index],
-                  warehouse: dropdownValues[Indexes.warehouse.index],
-                  newTreadType: dropdownValues[Indexes.newTreadType.index],
-                  newTreadWidth: dropdownValues[Indexes.newTreadWidth.index],
-                  newTread: dropdownValues[Indexes.newTread.index],
-                  treadDefect: dropdownValues[Indexes.treadDefect.index],
-                  tireBrand: dropdownValues[Indexes.tireBrand.index],
-                  tireSizeLength: dropdownValues[Indexes.tireSizeLength.index]);
+              updateValues();
             },
             child: const Icon(Icons.save)),
         widget.wheel.number + 1 ==
@@ -745,5 +776,36 @@ class _NewTireWidgetState extends State<NewTireWidget> {
         ),
       ],
     );
+  }
+
+  TextButton treadDateButton(BuildContext context) {
+    return TextButton(
+        onPressed: () {
+          DatePicker.showPicker(
+            context,
+            showTitleActions: true,
+            pickerModel: CustomMonthPicker(
+              minTime: DateTime(2015, 1, 1),
+              maxTime: DateTime.now(),
+              currentTime: lastPickedDate == DateTime.now()
+                  ? DateTime.now()
+                  : lastPickedDate,
+              locale: LocaleType.ru,
+            ),
+            onChanged: (date) {
+              treadDateUpdating(date);
+            },
+            onConfirm: (date) {
+              treadDateUpdating(date);
+            },
+          );
+        },
+        child: dropdownValues[Indexes.treadDate.index] == ''
+            ? const Text(
+                'добавить добавление значений в таблицу',
+                style: TextStyle(color: Colors.blue),
+              )
+            : Text(
+                '${tr('treadDate')}: ${dropdownValues[Indexes.treadDate.index]}'));
   }
 }
