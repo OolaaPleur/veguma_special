@@ -37,6 +37,7 @@ class _WheelListScreenState extends State<WheelListScreen> {
       ),
       floatingActionButton: FloatingActionButton(
           onPressed: () {
+            print(DateFormat('dd-MM-yyyy').format(DateTime.now()).toString());
             int listLength =
                 Provider.of<Wheels>(context, listen: false).tires.length;
             Provider.of<Wheels>(context, listen: false).addWheel(

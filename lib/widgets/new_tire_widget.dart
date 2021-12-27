@@ -94,12 +94,11 @@ class _NewTireWidgetState extends State<NewTireWidget> {
     _hardnessController.text = widget.wheel.hardness;
     isCheckedNewTread = widget.wheel.newTread;
     isCheckedTradeDefect = widget.wheel.treadDefect;
-    setState(() {
-
-    });
+    setState(() {});
 
     super.initState();
   }
+
   late bool isCheckedNewTread;
   late bool isCheckedTradeDefect;
 
@@ -269,24 +268,32 @@ class _NewTireWidgetState extends State<NewTireWidget> {
                   padding: const EdgeInsets.all(8.0),
                   child: SizedBox(
                       width: mediaQuery.size.width * 0.3,
-                      child: TextField(controller: _mixtureNumberController, keyboardType: TextInputType.number,)),
+                      child: TextField(
+                          controller: _mixtureNumberController,
+                          keyboardType: TextInputType.number,
+                          decoration:
+                              InputDecoration(labelText: tr('mixtureNumber')))),
                 ),
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: SizedBox(
                       width: mediaQuery.size.width * 0.3,
-                      child: TextField(controller: _hardnessController, keyboardType: TextInputType.number,)),
+                      child: TextField(
+                          controller: _hardnessController,
+                          keyboardType: TextInputType.number,
+                          decoration:
+                              InputDecoration(labelText: tr('hardness')))),
                 ),
                 oneMoreSaveAndDeleteButtons(
                     context, checkDropdownValuesEqualsWheelValues, mediaQuery),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
-                    Container(
+                    Provider.of<Wheels>(context).checkSameValuesInARow(widget.wheel.number) == 0 ? const SizedBox.shrink() : Container(
                       color: const Color(0xFF42A5F5),
                       padding: const EdgeInsets.all(10.0),
                       child: Text(
-                        '${tr('sameWheelsInARow')}: ${Provider.of<Wheels>(context).checkSameValuesInARow(widget.wheel.number)}',
+                        '${tr('sameWheelsInARow')}: ${Provider.of<Wheels>(context).checkSameValuesInARow(widget.wheel.number) + 1}',
                         style: const TextStyle(
                           fontSize: 15,
                         ),
@@ -801,9 +808,9 @@ class _NewTireWidgetState extends State<NewTireWidget> {
           );
         },
         child: dropdownValues[Indexes.treadDate.index] == ''
-            ? const Text(
-                'добавить добавление значений в таблицу',
-                style: TextStyle(color: Colors.blue),
+            ? Text(
+                tr('treadDate'),
+                style: const TextStyle(color: Colors.blue),
               )
             : Text(
                 '${tr('treadDate')}: ${dropdownValues[Indexes.treadDate.index]}'));
