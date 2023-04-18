@@ -193,11 +193,10 @@ class _NewTireWidgetState extends State<NewTireWidget> {
     updateValues();
   }
 
-  @override
-  Widget build(BuildContext context) {
-    final mediaQuery = MediaQuery.of(context);
+  bool checkDropdownValuesEqualsWheelValues = false;
 
-    bool checkDropdownValuesEqualsWheelValues() {
+  void checkDropdownValuesEqualsWheelValuesFunction() {
+    setState(() {
       Wheel wheel = Provider.of<Wheels>(context, listen: false)
           .tires[widget.wheel.number];
       if (wheel.tireSize == dropdownValues[Indexes.tireSize.index] &&
@@ -217,10 +216,28 @@ class _NewTireWidgetState extends State<NewTireWidget> {
           wheel.treadDate == dropdownValues[Indexes.treadDate.index] &&
           wheel.mixtureNumber == dropdownValues[Indexes.mixtureNumber.index] &&
           wheel.hardness == dropdownValues[Indexes.hardness.index]) {
-        return true;
+        print('true');
+        checkDropdownValuesEqualsWheelValues = true;
+        return;
       }
-      return false;
-    }
+      print('false');
+      checkDropdownValuesEqualsWheelValues = false;
+    });
+  }
+
+  checkIfValueEqualsToLocallySaved(String value, int index) {
+    setState(() {
+      if (value != dropdownValues[index]) {
+        checkDropdownValuesEqualsWheelValues = false;
+      } else {
+        checkDropdownValuesEqualsWheelValues = true;
+      }
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final mediaQuery = MediaQuery.of(context);
 
     return SingleChildScrollView(
       child: Card(
@@ -271,34 +288,58 @@ class _NewTireWidgetState extends State<NewTireWidget> {
                       child: TextField(
                           controller: _mixtureNumberController,
                           keyboardType: TextInputType.number,
+                          onSubmitted: (value) {
+                            saveTextFieldValues();
+                            checkDropdownValuesEqualsWheelValuesFunction();
+                          },
+                          onChanged: (value) {
+                            setState(() {
+                              checkIfValueEqualsToLocallySaved(
+                                  value, Indexes.mixtureNumber.index);
+                            });
+                          },
                           decoration:
                               InputDecoration(labelText: tr('mixtureNumber')))),
                 ),
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: SizedBox(
-                      width: mediaQuery.size.width * 0.3,
-                      child: TextField(
-                          controller: _hardnessController,
-                          keyboardType: TextInputType.number,
-                          decoration:
-                              InputDecoration(labelText: tr('hardness')))),
+                    width: mediaQuery.size.width * 0.3,
+                    child: TextField(
+                      controller: _hardnessController,
+                      keyboardType: TextInputType.number,
+                      decoration: InputDecoration(
+                        labelText: tr('hardness'),
+                      ),
+                      onSubmitted: (value) {
+                        saveTextFieldValues();
+                        checkDropdownValuesEqualsWheelValuesFunction();
+                      },
+                      onChanged: (value) {
+                        checkIfValueEqualsToLocallySaved(
+                            value, Indexes.hardness.index);
+                      },
+                    ),
+                  ),
                 ),
-                oneMoreSaveAndDeleteButtons(
-                    context, checkDropdownValuesEqualsWheelValues, mediaQuery),
+                oneMoreSaveAndDeleteButtons(context, mediaQuery),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
-                    Provider.of<Wheels>(context).checkSameValuesInARow(widget.wheel.number) == 0 ? const SizedBox.shrink() : Container(
-                      color: const Color(0xFF42A5F5),
-                      padding: const EdgeInsets.all(10.0),
-                      child: Text(
-                        '${tr('sameWheelsInARow')}: ${Provider.of<Wheels>(context).checkSameValuesInARow(widget.wheel.number) + 1}',
-                        style: const TextStyle(
-                          fontSize: 15,
-                        ),
-                      ),
-                    ),
+                    Provider.of<Wheels>(context)
+                                .checkSameValuesInARow(widget.wheel.number) ==
+                            0
+                        ? const SizedBox.shrink()
+                        : Container(
+                            color: const Color(0xFF42A5F5),
+                            padding: const EdgeInsets.all(10.0),
+                            child: Text(
+                              '${tr('sameWheelsInARow')}: ${Provider.of<Wheels>(context).checkSameValuesInARow(widget.wheel.number) + 1}',
+                              style: const TextStyle(
+                                fontSize: 15,
+                              ),
+                            ),
+                          ),
                   ],
                 ),
               ],
@@ -326,6 +367,7 @@ class _NewTireWidgetState extends State<NewTireWidget> {
           setState(() {
             dropdownValues[Indexes.tireSize.index] = newValue!;
             length();
+            checkDropdownValuesEqualsWheelValuesFunction();
           });
         },
         items: tireSize.map<DropdownMenuItem<String>>((String value) {
@@ -344,6 +386,16 @@ class _NewTireWidgetState extends State<NewTireWidget> {
       child: TextField(
         decoration: InputDecoration(labelText: tr('length')),
         controller: _tireSizeLengthController,
+        onSubmitted: (value) {
+          saveTextFieldValues();
+          checkDropdownValuesEqualsWheelValuesFunction();
+        },
+        onChanged: (value) {
+          setState(() {
+            checkIfValueEqualsToLocallySaved(
+                value, Indexes.tireSizeLength.index);
+          });
+        },
       ),
     );
   }
@@ -381,6 +433,7 @@ class _NewTireWidgetState extends State<NewTireWidget> {
             }
             dropdownValues[Indexes.treadType.index] = _selectedTreadType;
             dropdownValues[Indexes.treadWidth.index] = _selectedTreadWidth;
+            checkDropdownValuesEqualsWheelValuesFunction();
           });
         },
         value: _selectedTreadType,
@@ -410,6 +463,7 @@ class _NewTireWidgetState extends State<NewTireWidget> {
           setState(() {
             _selectedTreadWidth = value!;
             dropdownValues[Indexes.treadWidth.index] = value;
+            checkDropdownValuesEqualsWheelValuesFunction();
           });
         },
         value: _selectedTreadWidth,
@@ -427,6 +481,7 @@ class _NewTireWidgetState extends State<NewTireWidget> {
               dropdownValues[Indexes.patchNumbers.index] =
                   patchCount.toString();
             });
+            checkDropdownValuesEqualsWheelValuesFunction();
           },
           child: const Icon(Icons.remove, color: Colors.black),
           backgroundColor: Colors.white),
@@ -447,6 +502,7 @@ class _NewTireWidgetState extends State<NewTireWidget> {
             patchCount++;
             dropdownValues[Indexes.patchNumbers.index] = patchCount.toString();
           });
+          checkDropdownValuesEqualsWheelValuesFunction();
         },
       ),
     );
@@ -469,6 +525,7 @@ class _NewTireWidgetState extends State<NewTireWidget> {
           setState(() {
             dropdownValues[Indexes.interlayer.index] = newValue!;
           });
+          checkDropdownValuesEqualsWheelValuesFunction();
         },
         items: <DropdownMenuItem<String>>[
           DropdownMenuItem(
@@ -516,7 +573,9 @@ class _NewTireWidgetState extends State<NewTireWidget> {
             if (newValue == warehouse[1]) {
               _clientController.text = client[0];
             }
-          });
+          }
+          );
+          checkDropdownValuesEqualsWheelValuesFunction();
         },
         items: warehouse.map<DropdownMenuItem<String>>((String value) {
           return DropdownMenuItem<String>(
@@ -535,8 +594,13 @@ class _NewTireWidgetState extends State<NewTireWidget> {
         width: mediaQuery.size.width * 0.3,
         child: TypeAheadFormField(
           textFieldConfiguration: TextFieldConfiguration(
-              controller: _clientController,
-              decoration: InputDecoration(labelText: tr('client'))),
+            onSubmitted: (value) {
+              saveTextFieldValues();
+              checkDropdownValuesEqualsWheelValuesFunction();
+            },
+            controller: _clientController,
+            decoration: InputDecoration(labelText: tr('client')),
+          ),
           suggestionsCallback: (pattern) {
             return client;
           },
@@ -550,6 +614,8 @@ class _NewTireWidgetState extends State<NewTireWidget> {
           },
           onSuggestionSelected: (suggestion) {
             _clientController.text = suggestion.toString();
+            saveTextFieldValues();
+            checkDropdownValuesEqualsWheelValuesFunction();
           },
         ),
       ),
@@ -563,6 +629,10 @@ class _NewTireWidgetState extends State<NewTireWidget> {
         width: mediaQuery.size.width * 0.3,
         child: TypeAheadFormField(
           textFieldConfiguration: TextFieldConfiguration(
+              onSubmitted: (value) {
+                saveTextFieldValues();
+                checkDropdownValuesEqualsWheelValuesFunction();
+              },
               controller: _tireBrandController,
               decoration: InputDecoration(labelText: tr('tireBrand'))),
           suggestionsCallback: (pattern) {
@@ -578,6 +648,8 @@ class _NewTireWidgetState extends State<NewTireWidget> {
           },
           onSuggestionSelected: (suggestion) {
             _tireBrandController.text = suggestion.toString();
+            saveTextFieldValues();
+            checkDropdownValuesEqualsWheelValuesFunction();
           },
         ),
       ),
@@ -603,6 +675,7 @@ class _NewTireWidgetState extends State<NewTireWidget> {
               } else if (dropdownValues[Indexes.newTread.index] == true) {
                 dropdownValues[Indexes.newTread.index] = false;
               }
+              checkDropdownValuesEqualsWheelValuesFunction();
             });
           },
         ),
@@ -646,6 +719,7 @@ class _NewTireWidgetState extends State<NewTireWidget> {
                   return;
                 }
                 dropdownValues[Indexes.newTreadType.index] = value;
+                checkDropdownValuesEqualsWheelValuesFunction();
               });
             },
             value: _selectedNewTreadType,
@@ -675,6 +749,7 @@ class _NewTireWidgetState extends State<NewTireWidget> {
               });
               print(dropdownValues[Indexes.newTreadWidth.index]);
               print(value);
+              checkDropdownValuesEqualsWheelValuesFunction();
             },
             value: _selectedNewTreadWidth,
           ),
@@ -701,6 +776,7 @@ class _NewTireWidgetState extends State<NewTireWidget> {
             } else if (dropdownValues[Indexes.treadDefect.index] == true) {
               dropdownValues[Indexes.treadDefect.index] = false;
             }
+            checkDropdownValuesEqualsWheelValuesFunction();
           },
         ),
       ],
@@ -708,16 +784,14 @@ class _NewTireWidgetState extends State<NewTireWidget> {
   }
 
   Row oneMoreSaveAndDeleteButtons(
-      BuildContext context,
-      bool Function() checkDropdownValuesEqualsWheelValues,
-      MediaQueryData mediaQuery) {
+      BuildContext context, MediaQueryData mediaQuery) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
         widget.wheel.number + 1 ==
                 Provider.of<Wheels>(context, listen: false).tires.length
             ? ElevatedButton(
-                onPressed: checkDropdownValuesEqualsWheelValues()
+                onPressed: checkDropdownValuesEqualsWheelValues
                     ? () {
                         saveTextFieldValues();
                         Provider.of<Wheels>(context, listen: false).addWheel(
@@ -754,13 +828,14 @@ class _NewTireWidgetState extends State<NewTireWidget> {
             : const SizedBox.shrink(),
         ElevatedButton(
             style: ButtonStyle(
-                backgroundColor: checkDropdownValuesEqualsWheelValues()
+                backgroundColor: checkDropdownValuesEqualsWheelValues
                     ? MaterialStateProperty.all(Colors.green)
                     : MaterialStateProperty.all(Colors.red)),
             onPressed: () {
               saveTextFieldValues();
               print(dropdownValues);
               updateValues();
+              checkDropdownValuesEqualsWheelValues = true;
             },
             child: const Icon(Icons.save)),
         widget.wheel.number + 1 ==
@@ -779,6 +854,7 @@ class _NewTireWidgetState extends State<NewTireWidget> {
           padding: const EdgeInsets.all(10.0),
           message: tr('hintAboutSameWheels'),
           child: Text(tr('hint')),
+          showDuration: const Duration(seconds: 6),
           triggerMode: TooltipTriggerMode.tap,
         ),
       ],

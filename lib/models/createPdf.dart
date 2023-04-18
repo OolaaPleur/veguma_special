@@ -11,6 +11,7 @@ import 'package:pdf/widgets.dart' as pw;
 
 import 'package:path_provider/path_provider.dart';
 import 'package:veguma_special/models/wheels.dart';
+import 'package:cross_file/cross_file.dart';
 
 class CreatePdf with ChangeNotifier {
   Future<void> createPdfOnPressed(BuildContext context) async {
@@ -89,6 +90,7 @@ class CreatePdf with ChangeNotifier {
     print(appDocPath);
     final file = File("$appDocPath/tires.pdf");
     await file.writeAsBytes(await pdf.save());
-    Share.shareFiles(['$appDocPath/tires.pdf'], text: 'Отчет');
+    XFile xFile = XFile(file.path);
+    Share.shareXFiles([xFile], text: 'Отчет');
   }
 }

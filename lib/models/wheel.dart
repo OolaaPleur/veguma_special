@@ -1,4 +1,4 @@
-class Wheel{
+class Wheel {
   final String dateTime;
   final String id;
   final String tireSize;
@@ -37,8 +37,8 @@ class Wheel{
     this.treadDefect = false,
     this.tireBrand = '',
     this.tireSizeLength = '',
-    this.treadDate='',
-    this.mixtureNumber='',
-    this.hardness='',
+    this.treadDate = '',
+    this.mixtureNumber = '',
+    this.hardness = '',
   });
 }

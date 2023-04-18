@@ -1,8 +1,8 @@
-import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
+import 'package:flutter_datetime_picker/flutter_datetime_picker.dart' as pick;
 
-class CustomMonthPicker extends DatePickerModel {
+class CustomMonthPicker extends pick.DatePickerModel {
   CustomMonthPicker({required DateTime currentTime, required DateTime minTime, required DateTime maxTime,
-    required LocaleType locale}) : super(locale: locale, minTime: minTime, maxTime:
+    required pick.LocaleType locale}) : super(locale: locale, minTime: minTime, maxTime:
   maxTime, currentTime: currentTime);
 
   @override
